@@ -10,6 +10,14 @@ interface UsersPageProps {
   setSearchKeyword: React.Dispatch<React.SetStateAction<string>>
 }
 
+interface User {
+  id: number
+  first_name: string
+  last_name: string
+  email: string
+  avatar: string
+}
+
 export default function UsersPage({
   searchKeyword,
   setSearchKeyword
@@ -18,13 +26,12 @@ export default function UsersPage({
     per_page: 3
   })
 
-  const [selectedUser, setSelectedUser] = useState<any>(null)
+  const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const loadMoreRef = useRef<HTMLDivElement | null>(null)
-  // const [isLoading, setLoading] = useState(true)
 
-  const users = data?.pages.flatMap((page: any) => page.data) || []
+  const users = data?.pages.flatMap((page) => page.data) || []
 
-  let filteredUsers = users.filter(
+  const filteredUsers = users.filter(
     (user) =>
       `${user.first_name} ${user.last_name}`
         .toLowerCase()
@@ -32,7 +39,7 @@ export default function UsersPage({
       user.email.toLowerCase().includes(searchKeyword.toLowerCase())
   )
 
-  const handleOnSave = (payload: any) => {
+  const handleOnSave = () => {
     setTimeout(() => {}, 500)
     alert('Data has been saved')
 
@@ -48,17 +55,19 @@ export default function UsersPage({
         }
       },
       {
-        rootMargin: '100px' // Trigger the observer 100px before reaching the bottom
+        rootMargin: '100px'
       }
     )
 
-    if (loadMoreRef.current) {
-      observer.observe(loadMoreRef.current)
+    const currentLoadMoreRef = loadMoreRef.current
+
+    if (currentLoadMoreRef) {
+      observer.observe(currentLoadMoreRef)
     }
 
     return () => {
-      if (loadMoreRef.current) {
-        observer.unobserve(loadMoreRef.current)
+      if (currentLoadMoreRef) {
+        observer.unobserve(currentLoadMoreRef)
       }
     }
   }, [fetchNextPage, hasNextPage, isFetching])
@@ -85,7 +94,7 @@ export default function UsersPage({
 
       {/* Infinite Scroll Trigger */}
       <div ref={loadMoreRef} className="my-4">
-        {isFetching && <Spinner />}{' '}
+        {isFetching && <Spinner />}
       </div>
 
       {selectedUser && (

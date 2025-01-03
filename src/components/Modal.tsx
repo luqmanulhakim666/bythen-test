@@ -1,20 +1,26 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 
-export default function Modal({
-  user,
-  onClose,
-  onSave
-}: {
-  user: any
+// Define the user type
+interface User {
+  id: number
+  first_name: string
+  last_name: string
+  email: string
+}
+
+interface ModalProps {
+  user: User
   onClose: () => void
-  onSave: any
-}) {
+  onSave: (updatedUser: User) => void
+}
+
+export default function Modal({ user, onClose, onSave }: ModalProps) {
   const [firstName, setFirstName] = useState(user.first_name)
   const [lastName, setLastName] = useState(user.last_name)
 
   const handleSave = () => {
-    const updatedUser = {
+    const updatedUser: User = {
       ...user,
       first_name: firstName,
       last_name: lastName
@@ -33,6 +39,7 @@ export default function Modal({
         exit={{ opacity: 0, scale: 0.8 }}
         transition={{ duration: 0.3 }}
       >
+        {/* Close Button */}
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-500 hover:text-black"
@@ -43,7 +50,6 @@ export default function Modal({
         <h2 className="text-lg font-bold mb-4 text-center">
           Edit User Details
         </h2>
-        {firstName}
 
         {/* User Info Inputs */}
         <div className="space-y-4">
@@ -70,6 +76,7 @@ export default function Modal({
           />
         </div>
 
+        {/* Save Button */}
         <button
           onClick={handleSave}
           className="bg-blue-500 text-white px-4 py-2 rounded w-full mt-4"

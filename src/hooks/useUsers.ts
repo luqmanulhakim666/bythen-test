@@ -6,7 +6,7 @@ export const useUsers = (initialParams = {}) => {
   return useInfiniteQuery({
     queryKey: ['users', initialParams],
     queryFn: async ({ pageParam = 1, queryKey }) => {
-      const [, search, params] = queryKey
+      const [params] = queryKey
 
       const response = await axios.get('https://reqres.in/api/users', {
         params: { ...params, page: pageParam }

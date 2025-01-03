@@ -1,5 +1,6 @@
 // src/pages/_app.tsx
 import { useState, useEffect } from 'react'
+import { AppProps } from 'next/app'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import Sidebar from '../components/Sidebar'
 import Navbar from '../components/Navbar'
@@ -7,7 +8,14 @@ import '../styles/globals.css'
 
 const queryClient = new QueryClient()
 
-function App({ Component, pageProps }: any) {
+type CustomAppProps = AppProps & {
+  Component: AppProps['Component'] & {
+    searchKeyword?: string
+    setSearchKeyword?: (keyword: string) => void
+  }
+}
+
+function App({ Component, pageProps }: CustomAppProps) {
   const [isSidebarOpen, setSidebarOpen] = useState(true)
   const [isSidebarExpanded, setSidebarExpanded] = useState(true)
   const [searchKeyword, setSearchKeyword] = useState('')
@@ -27,7 +35,6 @@ function App({ Component, pageProps }: any) {
 
     window.addEventListener('resize', handleResize)
 
-    // Clean up event listener
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
@@ -44,16 +51,14 @@ function App({ Component, pageProps }: any) {
 
         {/* Main Content */}
         <main className="flex-1">
-          {/* Mobile Toggle Button */}
           <div className="md:hidden">
             <Navbar
               onSearch={setSearchKeyword}
               setSidebarOpen={setSidebarOpen}
-            />{' '}
-            {/* Pass setSidebarOpen */}
+            />
           </div>
 
-          {/*Pages*/}
+          {/* Pages */}
           <div className="flex-1 min-h-screen mx-0 bg-slate-100 transition-all duration-300 ease-in-out p-6">
             <Component
               {...pageProps}
